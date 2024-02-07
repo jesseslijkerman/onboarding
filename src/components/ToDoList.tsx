@@ -1,11 +1,25 @@
-import React, {ChangeEvent, useState} from "react";
+import React, {ChangeEvent, useEffect, useState} from "react";
 import {ToDo} from "../Interfaces.ts";
 import ToDoTask from "./ToDoTask.tsx";
+import {ToDoAdaptor} from "../services/ToDoAdaptor.ts";
 
 const ToDoList:React.FC = () =>{
     const [task, setTask] = useState<string>('');
     const [id, setId] = useState<number>(0);
     const [toDoList, setToDoList] = useState<ToDo[]>([]);
+    const toDoAdaptor = new ToDoAdaptor("http://localhost:3000/todos");
+
+    useEffect(() => {
+        const fetchToDos = async () => {
+            const todos = await toDoAdaptor.asyncFindAll();
+            console.log(todos)
+            if (todos) {
+                setToDoList(todos);
+            }
+        };
+
+        fetchToDos().catch(console.error);
+    }, []); // empty dependency array ensures the effect only runs once on component mount
 
     const handleChange = (event:ChangeEvent<HTMLInputElement>) => {
         setTask(event.target.value)
@@ -22,6 +36,7 @@ const ToDoList:React.FC = () =>{
     }
 
     function deleteById(id:number) {
+        toDoAdaptor.asyncDeleteById(id)
         setToDoList(toDoList.filter(toDo => toDo.id !== id))
     }
 
@@ -31,6 +46,11 @@ const ToDoList:React.FC = () =>{
                 toDo.id === id ? { ...toDo, task: updatedTask } : toDo
             )
         );
+        const editedToDo = {
+            id: id,
+            task: updatedTask
+        }
+        toDoAdaptor.asyncEditById(id, editedToDo)
     };
 
     return(

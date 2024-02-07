@@ -3,6 +3,7 @@ import * as express from 'express';
 import {ToDo} from "./entity/ToDo";
 import {Request, Response} from "express";
 import * as dotenv from "dotenv";
+import * as cors from "cors";
 
 AppDataSource.initialize().then(async () => {
     console.log("Data Source has been initialized!")
@@ -10,7 +11,8 @@ AppDataSource.initialize().then(async () => {
 }).catch(error => console.log(error))
 
 const app = express();
-app.use(express.json())
+app.use(express.json());
+app.use(cors())
 const port = process.env.PORT || 3000;
 
 // Create a new ToDo
