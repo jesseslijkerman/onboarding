@@ -2,6 +2,7 @@ import React, {ChangeEvent, useEffect, useState} from "react";
 import {ToDo} from "../Interfaces.ts";
 import ToDoTask from "./ToDoTask.tsx";
 import {ToDoAdaptor} from "../services/ToDoAdaptor.ts";
+import {Button, TextField} from "@mui/material";
 
 const ToDoList:React.FC = () =>{
     const [task, setTask] = useState<string>('');
@@ -58,8 +59,8 @@ const ToDoList:React.FC = () =>{
         <div>
             <h1>To Do:</h1>
 
-            <input type='text' name='task' placeholder='add task' value={task} onChange={handleChange}></input>
-            <button onClick={addToDo}>Add</button>
+            <TextField variant='standard' name='task' placeholder='add task' value={task} onChange={handleChange}></TextField>
+            <Button variant="contained" onClick={addToDo}>Add</Button>
 
             <div className='list'>
                 {toDoList.map(ToDo =>

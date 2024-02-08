@@ -1,5 +1,6 @@
 import {ToDo} from "../Interfaces.ts";
 import React, {useState} from "react";
+import {Button, Grid, TextField} from "@mui/material";
 
 interface Props{
     toDo: ToDo;
@@ -22,30 +23,34 @@ const ToDoTask = ({toDo, deleteById, editById}:Props) => {
     };
 
     return (
-        <div className='toDo'>
+        <Grid
+            container
+            direction = 'row'
+            jusify-content = 'center'
+            className='toDo'
+        >
             {isEditing ? (
                 <div>
-                    <input
-                        type="text"
+                    <TextField
+                        variant='standard'
                         defaultValue={toDo.task}
                         value={editedTask}
                         onChange={handleInputChange}>
-                    </input>
-                    <button onClick={toggleIsEditing}>Cancel</button>
-                    <button onClick={saveEditedTask}>Save</button>
+                    </TextField>
+                    <Button variant="outlined" onClick={toggleIsEditing}>Cancel</Button>
+                    <Button variant="outlined" onClick={saveEditedTask}>Save</Button>
                 </div>
             ) : (
                 <div>
                     <span>{toDo.task}</span>
-                    <button onClick={toggleIsEditing}>Edit</button>
+                    <Button variant="outlined" onClick={toggleIsEditing}>Edit</Button>
                 </div>
             )}
 
-            <span>{toDo.id}</span>
-            <button onClick={() => {
+            <Button variant="outlined" onClick={() => {
                 deleteById(toDo.id)
-            }}>Delete</button>
-        </div>
+            }}>Delete</Button>
+        </Grid>
     )
 }
 
