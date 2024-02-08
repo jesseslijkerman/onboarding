@@ -5,7 +5,7 @@ import {ToDoAdaptor} from "../services/ToDoAdaptor.ts";
 
 const ToDoList:React.FC = () =>{
     const [task, setTask] = useState<string>('');
-    const [id, setId] = useState<number>(0);
+    const [id, setId] = useState<number>(3000);
     const [toDoList, setToDoList] = useState<ToDo[]>([]);
     const toDoAdaptor = new ToDoAdaptor("http://localhost:3000/todos");
 
@@ -30,6 +30,7 @@ const ToDoList:React.FC = () =>{
             id: id,
             task: task
         }
+        toDoAdaptor.asyncSave(newToDo);
         setToDoList([... toDoList, newToDo]);
         setTask('');
         setId(id + 1);
