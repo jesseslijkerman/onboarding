@@ -1,11 +1,26 @@
-import React, {ChangeEvent, useState} from "react";
+import React, {ChangeEvent, useEffect, useState} from "react";
 import {ToDo} from "../Interfaces.ts";
 import ToDoTask from "./ToDoTask.tsx";
+import {ToDoAdaptor} from "../services/ToDoAdaptor.ts";
+import {Button, TextField} from "@mui/material";
 
 const ToDoList:React.FC = () =>{
     const [task, setTask] = useState<string>('');
-    const [id, setId] = useState<number>(0);
+    const [id, setId] = useState<number>(3000);
     const [toDoList, setToDoList] = useState<ToDo[]>([]);
+    const toDoAdaptor = new ToDoAdaptor("http://localhost:3000/todos");
+
+    useEffect(() => {
+        const fetchToDos = async () => {
+            const todos = await toDoAdaptor.asyncFindAll();
+            console.log(todos)
+            if (todos) {
+                setToDoList(todos);
+            }
+        };
+
+        fetchToDos().catch(console.error);
+    }, []); // empty dependency array ensures the effect only runs once on component mount
 
     const handleChange = (event:ChangeEvent<HTMLInputElement>) => {
         setTask(event.target.value)
@@ -16,12 +31,14 @@ const ToDoList:React.FC = () =>{
             id: id,
             task: task
         }
+        toDoAdaptor.asyncSave(newToDo);
         setToDoList([... toDoList, newToDo]);
         setTask('');
         setId(id + 1);
     }
 
     function deleteById(id:number) {
+        toDoAdaptor.asyncDeleteById(id)
         setToDoList(toDoList.filter(toDo => toDo.id !== id))
     }
 
@@ -31,14 +48,19 @@ const ToDoList:React.FC = () =>{
                 toDo.id === id ? { ...toDo, task: updatedTask } : toDo
             )
         );
+        const editedToDo = {
+            id: id,
+            task: updatedTask
+        }
+        toDoAdaptor.asyncEditById(id, editedToDo)
     };
 
     return(
         <div>
             <h1>To Do:</h1>
 
-            <input type='text' name='task' placeholder='add task' value={task} onChange={handleChange}></input>
-            <button onClick={addToDo}>Add</button>
+            <TextField variant='standard' name='task' placeholder='add task' value={task} onChange={handleChange}></TextField>
+            <Button variant="contained" onClick={addToDo}>Add</Button>
 
             <div className='list'>
                 {toDoList.map(ToDo =>
